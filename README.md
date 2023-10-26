@@ -38,7 +38,9 @@ $ misspeller mispell "fred" N=4 K=1
 - [x] Homoglyphs
 - [x] Leetspeak
 - [ ] Soundex (Insert, Drop)
-- [ ] Insert, Drop, Swap
+- [ ] Insert (duplicate characters)
+- [ ] Drop
+- [ ] Swap
 - [ ] Short forms: ‘you’ spelled as ‘u’ 
 
 

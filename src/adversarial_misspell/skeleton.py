@@ -26,6 +26,7 @@ import sys
 import random
 from homoglyph import homoglyph
 from leetspeak import leetspeak
+from duplicate import duplicate
 
 from adversarial_misspell import __version__
 
@@ -59,11 +60,14 @@ def all(input, K=1, N=1):
     inputs = [(list(input), set()) for _ in range(N)]
     for i in range(len(inputs)):
         for _ in range(K):
-            modifier_function = random.randint(0, 1)
+            modifier_function = random.randint(0, 3)
             if modifier_function == 1:
                 inputs[i] = leetspeak.leetspeak(inputs[i][0], seen=inputs[i][1])
             elif modifier_function == 0:
                 inputs[i] = homoglyph.homoglyph(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 2:
+                inputs[i] = duplicate.duplicate(inputs[i][0], seen=inputs[i][1])
+                
     res = []
     for modified_input in inputs:
         res.append(''.join(modified_input[0]))
