@@ -22,11 +22,15 @@ References:
 
 import argparse
 import logging
+import json
 import sys
 import random
 from homoglyph import homoglyph
 from leetspeak import leetspeak
 from duplicate import duplicate
+from drop import drop
+from swap import swap
+from replace import replace
 
 from adversarial_misspell import __version__
 
@@ -60,19 +64,25 @@ def all(input, K=1, N=1):
     inputs = [(list(input), set()) for _ in range(N)]
     for i in range(len(inputs)):
         for _ in range(K):
-            modifier_function = random.randint(0, 3)
-            if modifier_function == 1:
-                inputs[i] = leetspeak.leetspeak(inputs[i][0], seen=inputs[i][1])
-            elif modifier_function == 0:
+            modifier_function = random.randint(0, 5)
+            if modifier_function == 0:
                 inputs[i] = homoglyph.homoglyph(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 1:
+                inputs[i] = leetspeak.leetspeak(inputs[i][0], seen=inputs[i][1])
             elif modifier_function == 2:
                 inputs[i] = duplicate.duplicate(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 3:
+                inputs[i] = drop.drop(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 4:
+                inputs[i] = replace.replace(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 5:
+                inputs[i] = swap.swap(inputs[i][0], seen=inputs[i][1])
                 
     res = []
     for modified_input in inputs:
         res.append(''.join(modified_input[0]))
 
-    return res
+    return json.dumps(res)
 
 def refresh():
     """refreshes mappings

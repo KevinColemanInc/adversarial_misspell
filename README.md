@@ -28,20 +28,32 @@ $ misspeller refresh
 Creates 4 misspellings for fred with 1 change in each
 
 ```
-$ misspeller mispell "fred" N=4 K=1
-
-["frｅd", "phred", "fr3d", "frd"]
+$ python src/adversarial_misspell/skeleton.py all "fred" 10 1 | jq .
+[
+  "f>ed",
+  "/=red",
+  "fred",
+  "freI)",
+  "fr[-d",
+  "fredd",
+  "frd",
+  "fr℮d",
+  "fredd",
+  "fed"
+]
 ```
 
 ## Features
 
 - [x] Homoglyphs
 - [x] Leetspeak
-- [ ] Soundex (Insert, Drop)
 - [x] Insert (duplicate characters)
-- [ ] Drop
-- [ ] Swap
+- [x] Drop
+- [x] Swap
+- [x] Replace
+- [ ] Soundex (Insert, Drop)
 - [ ] Short forms: ‘you’ spelled as ‘u’ 
+- [ ] Typo (replace with nearby key)
 
 
 A longer description of your project goes here...
