@@ -35,11 +35,11 @@ $ misspeller mispell "fred" N=4 K=1
 
 ## Features
 
-[x] Homoglyphs
-[x] Leetspeak
-[ ] Soundex (Insert, Drop)
-[ ] Insert, Drop, Swap
-[ ] Short forms: ‘you’ spelled as ‘u’ 
+- [x] Homoglyphs
+- [x] Leetspeak
+- [ ] Soundex (Insert, Drop)
+- [ ] Insert, Drop, Swap
+- [ ] Short forms: ‘you’ spelled as ‘u’ 
 
 
 A longer description of your project goes here...
