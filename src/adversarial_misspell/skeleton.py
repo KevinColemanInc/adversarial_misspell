@@ -23,6 +23,9 @@ References:
 import argparse
 import logging
 import sys
+import random
+from homoglyph import homoglyph
+from leetspeak import leetspeak
 
 from adversarial_misspell import __version__
 
@@ -40,21 +43,41 @@ _logger = logging.getLogger(__name__)
 # when using this Python module as a library.
 
 
-def fib(n):
-    """Fibonacci example function
+def all(input, K=1, N=1):
+    """user all modifiers
 
     Args:
-      n (int): integer
+      N (int): integer - Number of words
+      K (int): integer - Max modifications per word
 
     Returns:
-      int: n-th Fibonacci number
+      list[string]: array of mispelled words
     """
-    assert n > 0
-    a, b = 1, 1
-    for _i in range(n - 1):
-        a, b = b, a + b
-    return a
+    assert N >= 0
+    assert K >= 0
 
+    inputs = [(list(input), set()) for _ in range(N)]
+    for i in range(len(inputs)):
+        for _ in range(K):
+            modifier_function = random.randint(0, 1)
+            if modifier_function == 1:
+                inputs[i] = leetspeak.leetspeak(inputs[i][0], seen=inputs[i][1])
+            elif modifier_function == 0:
+                inputs[i] = homoglyph.homoglyph(inputs[i][0], seen=inputs[i][1])
+    res = []
+    for modified_input in inputs:
+        res.append(''.join(modified_input[0]))
+
+    return res
+
+def refresh():
+    """refreshes mappings
+
+    Returns:
+      bool: True for success, false otherwise.
+    """
+
+    return homoglyph.refresh()
 
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
@@ -72,13 +95,13 @@ def parse_args(args):
     Returns:
       :obj:`argparse.Namespace`: command line parameters namespace
     """
-    parser = argparse.ArgumentParser(description="Just a Fibonacci demonstration")
+    parser = argparse.ArgumentParser(description="Generate Adversial Misspellings")
     parser.add_argument(
         "--version",
         action="version",
         version=f"adversarial_misspell {__version__}",
     )
-    parser.add_argument(dest="n", help="n-th Fibonacci number", type=int, metavar="INT")
+
     parser.add_argument(
         "-v",
         "--verbose",
@@ -95,7 +118,25 @@ def parse_args(args):
         action="store_const",
         const=logging.DEBUG,
     )
-    return parser.parse_args(args)
+
+    parser.add_argument("function", 
+                    nargs="?",
+                    choices=['all', 'refresh'],
+                    default='refresh',
+                    )
+    args, sub_args = parser.parse_known_args()
+
+    if args.function == "all":
+        parser = argparse.ArgumentParser()
+        parser.add_argument(dest="input", help="input string", type=str, metavar="STR")
+        parser.add_argument(dest="N", help="Number of mutations to generate", type=int, metavar="INT")
+        parser.add_argument(dest="K", help="Max Number of mutations per generation", type=int, metavar="INT")
+   
+        sub_args = parser.parse_args(sub_args)
+        return args, sub_args
+    elif args.function == "refresh":
+        return args
+    return args, sub_args
 
 
 def setup_logging(loglevel):
@@ -120,12 +161,15 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
-    args = parse_args(args)
+    args, subargs = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
-    print(f"The {args.n}-th Fibonacci number is {fib(args.n)}")
-    _logger.info("Script ends here")
 
+    if args.function == "refresh":
+        print(refresh())
+    elif args.function == "all":
+        print(all(subargs.input, K=subargs.K, N=subargs.N))
+    _logger.info("Script ends here")
 
 def run():
     """Calls :func:`main` passing the CLI arguments extracted from :obj:`sys.argv`
